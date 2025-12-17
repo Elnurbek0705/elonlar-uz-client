@@ -60,17 +60,26 @@ const Elonlarim = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {myElons.map((elon) => (
             <Card
-          key={elon._id}
-          id={elon._id}
-          image={elon.image}
-          title={elon.title}
-          price={elon.price}
-          location={elon.location}
-          rooms={elon.rooms}
-          area={elon.area}
-          status={elon.status}
-          postedDate={elon.createdAt}
-        />
+              key={elon._id}
+              id={elon._id}
+              image={elon.image}
+              title={elon.title}
+              price={elon.price}
+              location={elon.location}
+              rooms={elon.rooms}
+              area={elon.area}
+              status={elon.status}
+              postedDate={elon.createdAt}
+              user={userInfo}
+              ownerId={elon.ownerId}
+              onEdit={() => handleEdit(elon._id)}
+              onDelete={() => {
+                setDeleteId(elon._id);
+                setConfirmOpen(true);
+              }}
+              onSave={() => console.log("save", elon._id)}
+              isSaved={false}
+            />
           ))}
         </div>
       )}

@@ -43,12 +43,18 @@ function App() {
             }
           />
           {/* saved protected page */}
-          <Route path="saved" element={
-            <ProtectedRoute>
-              <Saved />
-            </ProtectedRoute>
-          } />
-          <Route path="*" element={<div className="p-10 text-center text-lg">Sahifa topilmadi</div>} />
+          <Route
+            path="saved"
+            element={
+              <ProtectedRoute>
+                <Saved />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="*"
+            element={<div className="p-10 text-center text-lg">Sahifa topilmadi</div>}
+          />
         </Route>
       </Routes>
     </>

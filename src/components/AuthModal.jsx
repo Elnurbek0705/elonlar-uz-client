@@ -9,7 +9,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "", lastName: "" });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -130,7 +130,7 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
                   type="text"
                   name="lastName"
                   placeholder="Last Name"
-                  value={formData.name}
+                  value={formData.lastName}
                   onChange={handleChange}
                   className="border w-full mb-3 p-2 rounded focus:outline-blue-500 dark:bg-zinc-700 dark:text-white"
                 />

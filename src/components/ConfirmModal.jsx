@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ConfirmModal = ({
@@ -21,6 +21,20 @@ const ConfirmModal = ({
         return "bg-red-600 hover:bg-red-700"; // danger
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";   // scrollni bloklash
+    } else {
+      document.body.style.overflow = "auto";     // qayta tiklash
+    }
+
+    // Component unmount bo‘lsa ham scrollni qaytaramiz
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
 
   return (
     <AnimatePresence>
