@@ -1,49 +1,40 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchMyElons, deleteElon } from "../../redux/elonSlice";
 import ConfirmModal from "../../components/ConfirmModal";
 import AddElonModal from "../../components/AddElonModal";
+import Card from "../../components/Card";
+import Loader from "../../components/Loader";
 
 const Elonlarim = () => {
-  const [elonlar, setElonlar] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.user);
+  const { myElons, myLoaded, loading } = useSelector((state) => state.elon);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const { userInfo } = useSelector((state) => state.user);
 
-  const fetchElonlar = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/elons/my", {
-        headers: {
-          Authorization: `Bearer ${userInfo?.token}`,
-        },
-      });
-      setElonlar(res.data);
-    } catch (err) {
-      console.error("Elonlarni olishda xatolik:", err);
-    } finally {
-      setLoading(false);
+  // 🔹 Request faqat birinchi marta yuboriladi
+  useEffect(() => {
+    if (!myLoaded && userInfo?.token) {
+      dispatch(fetchMyElons(userInfo.token));
     }
+  }, [dispatch, myLoaded, userInfo?.token]);
+
+  // 🔹 E’lonni o‘chirish
+  const handleDelete = () => {
+    if (!deleteId || !userInfo?.token) return;
+    dispatch(deleteElon({ id: deleteId, token: userInfo.token }));
+    setConfirmOpen(false);
   };
 
-  useEffect(() => {
-    fetchElonlar();
-  }, []);
-
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:5000/api/elonlar/${deleteId}`, {
-        headers: { Authorization: `Bearer ${userInfo?.token}` },
-      });
-      setElonlar((prev) => prev.filter((elon) => elon._id !== deleteId));
-    } catch (err) {
-      console.error("E’lonni o‘chirishda xatolik:", err);
-    } finally {
-      setConfirmOpen(false);
-    }
+  // 🔹 Edit modal uchun
+  const handleEdit = (id) => {
+    const selected = myElons.find((e) => e._id === id);
+    setEditData(selected);
+    setModalOpen(true);
   };
 
   return (
@@ -55,53 +46,31 @@ const Elonlarim = () => {
             setEditData(null);
             setModalOpen(true);
           }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
         >
           ➕ Yangi e’lon
         </button>
       </div>
 
-      {loading ? (
-        <p className="text-center text-zinc-500">Yuklanmoqda...</p>
-      ) : elonlar.length === 0 ? (
+      {loading && !myLoaded ? (
+        <Loader />
+      ) : myElons.length === 0 ? (
         <p className="text-center text-zinc-500">Hozircha hech qanday e’lon yo‘q.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {elonlar.map((elon) => (
-            <div
-              key={elon._id}
-              className="relative dark:bg-zinc-700 bg-zinc-300 inset-shadow-sm inset-shadow-zinc-500 rounded-lg shadow-md p-4"
-            >
-              <img
-                src={elon.image || "https://via.placeholder.com/300"}
-                alt={elon.title}
-                className="w-full h-48 object-cover rounded-md mb-3"
-              />
-              <h3 className="text-lg font-semibold mb-1">{elon.title}</h3>
-              <p className="text-sm text-zinc-500">{elon.location}</p>
-              <p className="text-blue-600 font-bold mt-2">{elon.price}$</p>
-
-              <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
-                <button
-                  onClick={() => {
-                    setEditData(elon);
-                    setModalOpen(true);
-                  }}
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-2 py-1 rounded"
-                >
-                  ✏️
-                </button>
-                <button
-                  onClick={() => {
-                    setDeleteId(elon._id);
-                    setConfirmOpen(true);
-                  }}
-                  className="bg-red-600 hover:bg-red-700 text-white text-xs px-2 py-1 rounded"
-                >
-                  🗑️
-                </button>
-              </div>
-            </div>
+          {myElons.map((elon) => (
+            <Card
+          key={elon._id}
+          id={elon._id}
+          image={elon.image}
+          title={elon.title}
+          price={elon.price}
+          location={elon.location}
+          rooms={elon.rooms}
+          area={elon.area}
+          status={elon.status}
+          postedDate={elon.createdAt}
+        />
           ))}
         </div>
       )}
@@ -109,7 +78,7 @@ const Elonlarim = () => {
       <AddElonModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        onCreated={fetchElonlar}
+        onCreated={() => dispatch(fetchMyElons(userInfo.token))}
         editData={editData}
       />
 

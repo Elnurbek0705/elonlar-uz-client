@@ -2,17 +2,23 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "./Card";
 import { fetchElonlar, fetchSavedElons, saveElon, deleteElon } from "./../redux/elonSlice";
+import Loader from "./Loader";
 
 const CardsList = () => {
   const dispatch = useDispatch();
-  const { elonlar, savedElons, loading } = useSelector((state) => state.elon);
+  const { elonlar, savedElons, loading, isLoaded } = useSelector((state) => state.elon);
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
+  console.log(elonlar);
+  
+  
 
   useEffect(() => {
-    dispatch(fetchElonlar());
+    if (!isLoaded) {
+      dispatch(fetchElonlar());
+    }
     dispatch(fetchSavedElons(token));
-  }, [dispatch, token]);
+  }, [dispatch, token, isLoaded]);
 
   const handleSave = (id) => {
     dispatch(saveElon({ id, token }));
@@ -23,7 +29,7 @@ const CardsList = () => {
     dispatch(deleteElon({ id, token }));
   };
 
-  if (loading) return <p>Yuklanmoqda...</p>;
+  if (loading) return <Loader />;
   if (elonlar.length === 0) return <p>E’lonlar topilmadi.</p>;
 
   return (
@@ -32,6 +38,7 @@ const CardsList = () => {
         <Card
           key={item._id}
           id={item._id}
+          ownerId={item.user._id} // backend’dan kelayotgan e’lon egasi id
           image={item.image}
           title={item.title}
           price={item.price}

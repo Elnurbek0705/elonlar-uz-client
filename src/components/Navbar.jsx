@@ -9,7 +9,12 @@ import ProfileModal from "./ProfileModal";
 import logo from "../assets/logo.svg";
 
 const Navbar = ({ collapsed, setCollapsed }) => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "dark") return true;
+  if (savedTheme === "light") return false;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches;
+});
   const [authOpen, setAuthOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -68,12 +73,12 @@ const Navbar = ({ collapsed, setCollapsed }) => {
       >
         {/* 🔹 Chap tomon */}
         <div className="flex items-center gap-3">
-          <button
+          {/* <button
             className="md:hidden p-2 rounded-md hover:bg-zinc-400/40 dark:hover:bg-zinc-600/40 transition"
             onClick={() => setCollapsed((prev) => !prev)}
           >
             <Menu size={22} className="text-zinc-800 dark:text-zinc-200" />
-          </button>
+          </button> */}
 
           <NavLink to="/" className="text-bold">
             <img className="w-18" src={logo} alt="logo" />

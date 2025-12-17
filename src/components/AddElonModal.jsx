@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ModalWrapper from "../components/ModalWrapper";
+import { addElon, updateElon } from "../redux/elonSlice";
 
-const AddElonModal = ({ isOpen, onClose, onCreated, editData }) => {
+const AddElonModal = ({ isOpen, onClose, editData }) => {
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.user);
+
   const [form, setForm] = useState({
     title: "",
     price: "",
@@ -18,9 +21,8 @@ const AddElonModal = ({ isOpen, onClose, onCreated, editData }) => {
   });
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { userInfo } = useSelector((state) => state.user);
 
-  
+  // 🔹 Edit data bilan formni to‘ldirish
   useEffect(() => {
     if (editData) {
       setForm({
@@ -53,7 +55,7 @@ const AddElonModal = ({ isOpen, onClose, onCreated, editData }) => {
     }
   }, [editData]);
 
-  // 🔧 input o‘zgarishlari
+  // 🔧 Input o‘zgarishlarini boshqarish
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -68,7 +70,7 @@ const AddElonModal = ({ isOpen, onClose, onCreated, editData }) => {
     setPreview(file ? URL.createObjectURL(file) : null);
   };
 
-  // 📤 e’lonni jo‘natish
+  // 📤 Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userInfo?.token) return alert("Tizimga kirmagansiz!");
@@ -80,32 +82,27 @@ const AddElonModal = ({ isOpen, onClose, onCreated, editData }) => {
         if (value !== null && value !== undefined) formData.append(key, value);
       });
 
-      const headers = {
-        Authorization: `Bearer ${userInfo.token}`,
-        "Content-Type": "multipart/form-data",
-      };
-
       if (editData) {
-        await axios.put(`http://localhost:5000/api/elonlar/${editData._id}`, formData, { headers });
+        await dispatch(
+          updateElon({ id: editData._id, formData, token: userInfo.token })
+        ).unwrap();
       } else {
-        await axios.post("http://localhost:5000/api/elonlar", formData, { headers });
+        await dispatch(addElon({ formData, token: userInfo.token })).unwrap();
       }
 
-      onCreated?.();
       onClose();
     } catch (err) {
-      console.error("E’lonni saqlashda xatolik:", err.response?.data || err.message);
-      alert(err.response?.data?.error || "E’lonni saqlashda xatolik yuz berdi.");
+      console.error("E’lonni saqlashda xatolik:", err);
+      alert(err.message || "E’lonni saqlashda xatolik yuz berdi.");
     } finally {
       setLoading(false);
     }
   };
 
-  // ❌ agar modal ochilmagan bo‘lsa — hech narsa render qilinmaydi
   if (!isOpen) return null;
 
   return (
-    <ModalWrapper> {/* 🧩 endi ModalWrapper ichida barcha kontent */}
+    <ModalWrapper>
       <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 w-full md:w-[480px] relative shadow-xl max-h-[90vh] overflow-y-auto">
         <h2 className="text-xl font-semibold text-center mb-4">
           {editData ? "E’lonni tahrirlash" : "Yangi e’lon qo‘shish"}
