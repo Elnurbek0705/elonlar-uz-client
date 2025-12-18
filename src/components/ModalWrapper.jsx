@@ -6,7 +6,6 @@ const ModalWrapper = ({ children }) => {
   const navigate = useNavigate();
   const close = () => navigate(-1);
 
-  // Ekran o‘lchamiga qarab animatsiyani tanlaymiz
   const isMobile = window.innerWidth <= 768;
 
   const desktopMotion = {

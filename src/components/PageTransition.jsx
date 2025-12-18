@@ -7,7 +7,7 @@ const PageTransition = ({ children }) => {
 
   return (
     <motion.div
-      key={location.pathname} // faqat sahifa o'zgarganda yangilanadi
+      key={location.pathname}
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}

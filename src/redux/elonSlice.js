@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// 🔹 Async Thunklar
 
 export const fetchElonlar = createAsyncThunk(
   "elon/fetchElonlar",
@@ -23,7 +22,7 @@ export const fetchSavedElons = createAsyncThunk(
       const res = await axios.get("http://localhost:5000/api/users/saved-elons", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return res.data; // <-- shu yerda savedElons emas, to‘g‘ridan array
+      return res.data; 
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -38,7 +37,7 @@ export const fetchMyElons = createAsyncThunk(
       const res = await axios.get("http://localhost:5000/api/elons/my", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return res.data; // backend to‘g‘ridan-to‘g‘ri array qaytaradi
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -70,27 +69,25 @@ export const deleteElon = createAsyncThunk(
       await axios.delete(`http://localhost:5000/api/elons/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return id; // o‘chirgan id ni reducerga yuboramiz
+      return id;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-// Async thunk: bitta elon detallarini olish
 export const fetchElonById = createAsyncThunk(
   "elon/fetchElonById",
   async (id, { rejectWithValue }) => {
     try {
       const res = await axios.get(`http://localhost:5000/api/elons/${id}`);
-      return res.data; // backend to‘g‘ridan object qaytaradi
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-// Async thunk: yangi elon qo‘shish
 export const addElon = createAsyncThunk(
   "elon/addElon",
   async ({ formData, token }, { rejectWithValue }) => {
@@ -98,14 +95,13 @@ export const addElon = createAsyncThunk(
       const res = await axios.post("http://localhost:5000/api/elons", formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
-      return res.data; // yangi elon object
+      return res.data; 
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
-// Async thunk: elonni yangilash
 export const updateElon = createAsyncThunk(
   "elon/updateElon",
   async ({ id, formData, token }, { rejectWithValue }) => {
@@ -113,7 +109,7 @@ export const updateElon = createAsyncThunk(
       const res = await axios.put(`http://localhost:5000/api/elons/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
-      return res.data; // updated elon object
+      return res.data; 
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
@@ -125,19 +121,18 @@ const elonSlice = createSlice({
   initialState: {
     elonlar: [],
     savedElons: [],
-    myElons: [], // <-- bu bo‘sh array bo‘lishi kerak
+    myElons: [], 
     loading: false,
     error: null,
-    isLoaded: false, // <-- Caching uchun flag
-    savedLoaded: false, // Saved page caching
-    myLoaded: false, // My elons caching (keyinchalik qo‘shiladi)
+    isLoaded: false,
+    savedLoaded: false,
+    myLoaded: false,
     currentElon: null,
     currentLoading: false,
     currentError: null,
   },
   reducers: {},
   extraReducers: (builder) => {
-    // fetchElonlar
     builder
       .addCase(fetchElonlar.pending, (state) => {
         state.loading = true;
@@ -146,13 +141,12 @@ const elonSlice = createSlice({
       .addCase(fetchElonlar.fulfilled, (state, action) => {
         state.loading = false;
         state.elonlar = action.payload;
-        state.isLoaded = true; // <-- CACHE to'ldi
+        state.isLoaded = true;
       })
       .addCase(fetchElonlar.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
-    // fetchMyElons
     builder
       .addCase(fetchMyElons.pending, (state) => {
         state.loading = true;
@@ -161,7 +155,7 @@ const elonSlice = createSlice({
       .addCase(fetchMyElons.fulfilled, (state, action) => {
         state.loading = false;
         state.myElons = action.payload || [];
-        state.myLoaded = true; // flag to‘ldirildi
+        state.myLoaded = true;
       })
       .addCase(fetchMyElons.rejected, (state, action) => {
         state.loading = false;
@@ -182,19 +176,16 @@ const elonSlice = createSlice({
         state.currentLoading = false;
       });
 
-    // fetchSavedElons
     builder.addCase(fetchSavedElons.fulfilled, (state, action) => {
       state.loading = false;
-      state.savedElons = action.payload || []; // <-- MUHIM
+      state.savedElons = action.payload || [];
       state.savedLoaded = true;
     });
 
-    // saveElon
     builder.addCase(saveElon.fulfilled, (state, action) => {
       state.savedElons = action.payload;
     });
 
-    // deleteElon
     builder.addCase(deleteElon.fulfilled, (state, action) => {
       state.elonlar = state.elonlar.filter((item) => item._id !== action.payload);
       state.myElons = state.myElons.filter((item) => item._id !== action.payload);

@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
-import { updateUserInfo } from "../../redux/userSlice"; // Redux action
+import { updateUserInfo } from "../../redux/userSlice";
+import { UserCircle } from "lucide-react";
 
 const ProfileSettings = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
 
-  // Form state
   const [formData, setFormData] = useState({
     name: "",
     lastName: "",
@@ -18,7 +18,6 @@ const ProfileSettings = () => {
     gender: "",
   });
 
-  // Redux user info ni formga yuklash
   useEffect(() => {
     if (userInfo?.user) {
       setFormData({
@@ -36,14 +35,13 @@ const ProfileSettings = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Ma'lumotlarni saqlash
   const handleSave = async () => {
     try {
       const token = userInfo?.token;
       if (!token) throw new Error("Token topilmadi");
 
       const res = await axios.put(
-        "http://localhost:5000/api/users/update", // plural "users"
+        "http://localhost:5000/api/users/update",
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -52,7 +50,6 @@ const ProfileSettings = () => {
         duration: 2500,
       });
 
-      // Redux state yangilash
       dispatch(updateUserInfo({ ...userInfo, user: res.data.user }));
     } catch (err) {
       toast.error("Xatolik yuz berdi ❌", { duration: 2500 });
@@ -72,21 +69,19 @@ const ProfileSettings = () => {
       <hr className="border-dashed border-zinc-400 dark:border-zinc-500 my-4" />
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4">
-        {/* Left box */}
         <div className="flex flex-col items-center justify-center rounded-2xl p-4 border border-zinc-400 dark:border-zinc-500 w-full h-64 md:h-[420px] inset-shadow-sm inset-shadow-zinc-500">
           <span className="text-lg font-semibold">
             {formData.name} {formData.lastName}
           </span>
           <div className="w-32 h-32 mt-4 rounded-full overflow-hidden flex items-center justify-center bg-zinc-200 dark:bg-zinc-600">
             <img
-              src={userInfo.avatar || "/default-avatar.png"}
+              src={userInfo?.avatar ||  "https://cdn-icons-png.flaticon.com/512/149/149071.png" }
               alt="User Avatar"
               className="w-full h-full object-cover"
             />
           </div>
         </div>
 
-        {/* Right box: form */}
         <div className="flex flex-col gap-4 rounded-2xl p-4 border border-zinc-400 dark:border-zinc-500 w-full  inset-shadow-sm inset-shadow-zinc-500 overflow-y-auto">
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Ism</label>

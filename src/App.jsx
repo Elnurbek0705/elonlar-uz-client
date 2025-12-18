@@ -42,7 +42,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* saved protected page */}
           <Route
             path="saved"
             element={

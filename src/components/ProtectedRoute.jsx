@@ -9,13 +9,11 @@ const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ⚡ Foydalanuvchi kirishga uringan manzil
   const fromPath = location.pathname;
 
   if (!userInfo) {
     if (!authOpen) setAuthOpen(true);
 
-    // X tugmasi bosilganda => Bosh sahifaga qaytish
     const handleClose = () => {
       setAuthOpen(false);
       navigate("/");
@@ -25,7 +23,7 @@ const ProtectedRoute = ({ children }) => {
       <AuthModal
         isOpen={authOpen}
         onClose={handleClose}
-        redirectTo={fromPath} // ⚡ Shu pathni modalga yuboramiz
+        redirectTo={fromPath}
       />
     );
   }

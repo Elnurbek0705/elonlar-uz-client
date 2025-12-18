@@ -9,7 +9,7 @@ const ConfirmModal = ({
   cancelText = "Yo‘q",
   onConfirm,
   onCancel,
-  type = "danger", // danger | warning | info
+  type = "danger",
 }) => {
   const getConfirmColor = () => {
     switch (type) {
@@ -24,12 +24,11 @@ const ConfirmModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";   // scrollni bloklash
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto";     // qayta tiklash
+      document.body.style.overflow = "auto";
     }
 
-    // Component unmount bo‘lsa ham scrollni qaytaramiz
     return () => {
       document.body.style.overflow = "auto";
     };

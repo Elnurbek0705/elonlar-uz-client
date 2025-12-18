@@ -11,7 +11,7 @@ const CardDetails = () => {
   const { currentElon, currentLoading, currentError } = useSelector((state) => state.elon);
 
   useEffect(() => {
-    if (!id) return; // id yo‘q bo‘lsa fetch qilma
+    if (!id) return;
     if (!currentElon || currentElon._id !== id) {
       dispatch(fetchElonById(id));
     }

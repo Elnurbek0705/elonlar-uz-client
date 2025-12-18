@@ -10,7 +10,6 @@ const ProfileDropdown = ({ isOpen, onClose, user, onLogout }) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* 🔹 Fon (tashqariga bosilganda yopiladi) */}
           <motion.div
             className="fixed inset-0 z-40"
             initial={{ opacity: 0 }}
@@ -19,7 +18,6 @@ const ProfileDropdown = ({ isOpen, onClose, user, onLogout }) => {
             onClick={onClose}
           />
 
-          {/* 🔹 Dropdown modal */}
           <motion.div
             className="fixed top-20 right-2 z-50 w-70 bg-white dark:bg-zinc-700
                        rounded-xl shadow-lg p-5 flex flex-col gap-3"
@@ -29,7 +27,6 @@ const ProfileDropdown = ({ isOpen, onClose, user, onLogout }) => {
             transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* 🔹 Foydalanuvchi ma’lumoti */}
             <div className="flex items-center gap-3">
               <img
                 src={
@@ -51,12 +48,11 @@ const ProfileDropdown = ({ isOpen, onClose, user, onLogout }) => {
 
             <hr className="border-zinc-300 dark:border-zinc-500" />
 
-            {/* 🔹 Sozlamalar va chiqish */}
             <div className="flex flex-col gap-1">
               <button   
                 onClick={() => {
                   onClose();
-                  navigate("/settings"); // 🔹 SPA navigatsiya
+                  navigate("/settings");
                 }}
                 className="flex items-center gap-2 p-3 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-500 transition text-sm"
               >

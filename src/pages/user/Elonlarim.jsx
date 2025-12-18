@@ -16,21 +16,18 @@ const Elonlarim = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
-  // 🔹 Request faqat birinchi marta yuboriladi
   useEffect(() => {
     if (!myLoaded && userInfo?.token) {
       dispatch(fetchMyElons(userInfo.token));
     }
   }, [dispatch, myLoaded, userInfo?.token]);
 
-  // 🔹 E’lonni o‘chirish
   const handleDelete = () => {
     if (!deleteId || !userInfo?.token) return;
     dispatch(deleteElon({ id: deleteId, token: userInfo.token }));
     setConfirmOpen(false);
   };
 
-  // 🔹 Edit modal uchun
   const handleEdit = (id) => {
     const selected = myElons.find((e) => e._id === id);
     setEditData(selected);

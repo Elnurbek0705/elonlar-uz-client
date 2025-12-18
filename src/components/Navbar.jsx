@@ -23,7 +23,6 @@ const Navbar = ({ collapsed, setCollapsed }) => {
   const { userInfo } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  // 🔹 Sahifa nomi
   const getPageTitle = () => {
     switch (location.pathname) {
       case "/":
@@ -37,7 +36,6 @@ const Navbar = ({ collapsed, setCollapsed }) => {
     }
   };
 
-  // 🔹 Dark mode boshqaruvi
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -73,12 +71,6 @@ const Navbar = ({ collapsed, setCollapsed }) => {
       >
         {/* 🔹 Chap tomon */}
         <div className="flex items-center gap-3">
-          {/* <button
-            className="md:hidden p-2 rounded-md hover:bg-zinc-400/40 dark:hover:bg-zinc-600/40 transition"
-            onClick={() => setCollapsed((prev) => !prev)}
-          >
-            <Menu size={22} className="text-zinc-800 dark:text-zinc-200" />
-          </button> */}
 
           <NavLink to="/" className="text-bold">
             <img className="w-18" src={logo} alt="logo" />
@@ -90,9 +82,7 @@ const Navbar = ({ collapsed, setCollapsed }) => {
           </h1>
         </div>
 
-        {/* 🔹 O‘ng tomon */}
         <div className="flex items-center gap-4 relative">
-          {/* Dark mode tugmasi */}
           <button
             onClick={() => setDarkMode(!darkMode)}
             className="p-2 rounded-md hover:bg-zinc-400/40 dark:hover:bg-zinc-600/70 transition dark:bg-zinc-700 bg-zinc-400"
@@ -104,7 +94,6 @@ const Navbar = ({ collapsed, setCollapsed }) => {
             )}
           </button>
 
-          {/* 🔹 Foydalanuvchi */}
           {userInfo ? (
             <button
               onClick={() => setProfileOpen(true)}
@@ -131,10 +120,8 @@ const Navbar = ({ collapsed, setCollapsed }) => {
         </div>
       </header>
 
-      {/* 🔹 Auth Modal */}
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
 
-      {/* 🔹 Confirm Modal */}
       <ConfirmModal
         isOpen={confirmOpen}
         title="Chiqishni tasdiqlang"
@@ -143,7 +130,6 @@ const Navbar = ({ collapsed, setCollapsed }) => {
         onCancel={() => setConfirmOpen(false)}
       />
 
-      {/* 🔹 Profile Modal */}
       <ProfileModal
         isOpen={profileOpen}
         onClose={() => setProfileOpen(false)}

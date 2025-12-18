@@ -19,7 +19,6 @@ const Card = ({
   onSave,
   isSaved,
 }) => {
-  // Foydalanuvchi e’lon egasimi?
   const isOwner = user?._id === ownerId;
 
   return (
@@ -28,7 +27,6 @@ const Card = ({
 
       <div className="p-4 flex flex-col flex-1 justify-between">
 
-        {/* --- E’lon ma’lumotlari --- */}
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">
             {title}
@@ -50,10 +48,8 @@ const Card = ({
           </div>
         </div>
 
-        {/* --- Pastki tugmalar --- */}
         <div className="mt-4 flex flex-col gap-2">
 
-          {/* Batafsil + Saqlash */}
           <div className="flex flex-row gap-2">
             <NavLink
               to={`/cards/${id}`}
@@ -73,7 +69,6 @@ const Card = ({
             </button>
           </div>
 
-          {/* Tahrirlash + O‘chirish (faqat egasi uchun) */}
           {isOwner && (
             <div className="flex gap-2 mt-2">
               <button

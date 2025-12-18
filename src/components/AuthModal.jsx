@@ -24,7 +24,6 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
 
     try {
       if (isLogin) {
-        // LOGIN
         const res = await axios.post("http://localhost:5000/api/auth/login", {
           email: formData.email,
           password: formData.password,

@@ -22,7 +22,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Edit data bilan formni to‘ldirish
   useEffect(() => {
     if (editData) {
       setForm({
@@ -55,7 +54,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
     }
   }, [editData]);
 
-  // 🔧 Input o‘zgarishlarini boshqarish
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -70,7 +68,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
     setPreview(file ? URL.createObjectURL(file) : null);
   };
 
-  // 📤 Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userInfo?.token) return alert("Tizimga kirmagansiz!");
@@ -109,7 +106,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
         </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          {/* Sarlavha */}
           <div>
             <label className="block mb-1 text-sm font-medium">Sarlavha *</label>
             <input
@@ -121,7 +117,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
             />
           </div>
 
-          {/* Narx */}
           <div>
             <label className="block mb-1 text-sm font-medium">Narx ($) *</label>
             <input
@@ -134,7 +129,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
             />
           </div>
 
-          {/* Joylashuv */}
           <div>
             <label className="block mb-1 text-sm font-medium">Joylashuv *</label>
             <input
@@ -146,7 +140,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
             />
           </div>
 
-          {/* Xonalar va maydon */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block mb-1 text-sm font-medium">Xonalar *</label>
@@ -172,7 +165,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
             </div>
           </div>
 
-          {/* Qavat */}
           <div>
             <label className="block mb-1 text-sm font-medium">Qavat</label>
             <input
@@ -184,7 +176,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
             />
           </div>
 
-          {/* Holati */}
           <div>
             <label className="block mb-1 text-sm font-medium">Holati *</label>
             <select
@@ -197,8 +188,7 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
               <option value="Kelishilgan">Kelishilgan</option>
             </select>
           </div>
-
-          {/* Mebelli */}
+          
           <div className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -209,7 +199,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
             <label className="text-sm font-medium">Mebelli</label>
           </div>
 
-          {/* Rasm */}
           <div>
             <label className="block mb-1 text-sm font-medium">Rasm yuklang *</label>
             <input
@@ -229,7 +218,6 @@ const AddElonModal = ({ isOpen, onClose, editData }) => {
             )}
           </div>
 
-          {/* Tavsif */}
           <div>
             <label className="block mb-1 text-sm font-medium">Qo‘shimcha ma’lumot *</label>
             <textarea

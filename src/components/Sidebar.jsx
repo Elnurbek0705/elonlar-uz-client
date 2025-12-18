@@ -57,7 +57,6 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
         />
       </button>
 
-      {/* Sahifalar */}
       <nav className="flex flex-col gap-1 relative">
         {pages.map(({ name, path, icon: Icon }) => (
           <div key={name} className="relative group">
