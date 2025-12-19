@@ -18,6 +18,7 @@ const Card = ({
   onEdit,
   onSave,
   isSaved,
+  showOwnerActions = true,
 }) => {
   const isOwner = user?._id === ownerId;
 
@@ -62,14 +63,15 @@ const Card = ({
               onClick={() => onSave(id)}
               className="rounded-md px-2"
             >
-              <Heart
-                size={30}
-                className={isSaved ? "text-red-600" : "text-pink-500"}
-              />
+            <Heart
+              size={30}
+              className={isSaved ? "text-red-600 fill-current" : "text-pink-500"}
+              style={isSaved ? { stroke: "none" } : undefined}
+            />
             </button>
           </div>
 
-          {isOwner && (
+          {isOwner && showOwnerActions && (
             <div className="flex gap-2 mt-2">
               <button
                 onClick={() => onEdit(id)}

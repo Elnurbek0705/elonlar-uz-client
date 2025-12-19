@@ -29,10 +29,24 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
           password: formData.password,
         });
 
-        console.log(res.data.token);
-        
-        localStorage.setItem("token", res.data.token);
-        dispatch(loginSuccess(res.data));
+        const token = res.data.token;
+        let user = res.data.user ?? null;
+
+        // If backend didn't return user object, fetch the profile using the token
+        if (!user) {
+          try {
+            const meRes = await axios.get("http://localhost:5000/api/users/me", {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            user = meRes.data.user ?? meRes.data;
+          } catch (err) {
+            console.warn("Could not fetch user profile after login:", err);
+          }
+        }
+
+        // Persist token and update redux with a normalized payload { token, user }
+        localStorage.setItem("token", token);
+        dispatch(loginSuccess({ token, user }));
 
         toast.success("Tizimga muvaffaqiyatli kirdingiz ✅", {
           duration: 2500,

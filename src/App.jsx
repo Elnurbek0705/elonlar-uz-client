@@ -1,4 +1,7 @@
 import { Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchCurrentUser, loginSuccess, logout } from "./redux/userSlice";
 import MainLayout from "./layout/MainLayout";
 import Home from "./pages/user/Home";
 import Elonlarim from "./pages/user/Elonlarim";
@@ -9,6 +12,32 @@ import CardDetails from "./pages/user/CardDetails";
 import Saved from "./pages/user/Saved";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("userInfo"));
+    const token = stored?.token ?? localStorage.getItem("token");
+    const hasUser = !!stored?.user;
+
+    if (token && !hasUser) {
+      dispatch(fetchCurrentUser(token)).then((res) => {
+        if (res.meta?.requestStatus === "fulfilled") {
+          dispatch(loginSuccess({ token, user: res.payload }));
+        } else {
+          // If unauthorized, clear stored auth
+          if (res.payload?.unauthorized) {
+            dispatch(logout());
+          }
+        }
+      });
+    } else if (token && hasUser) {
+      // Ensure redux has normalized payload
+      dispatch(loginSuccess(stored));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
   return (
     <>
       <Toaster

@@ -69,7 +69,6 @@ const Navbar = ({ collapsed, setCollapsed }) => {
         py-2 px-4 shadow-lg backdrop-blur-[20px] 
         flex justify-between items-center`}
       >
-        {/* 🔹 Chap tomon */}
         <div className="flex items-center gap-3">
 
           <NavLink to="/" className="text-bold">

@@ -1,30 +1,28 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSavedElons } from "../../redux/elonSlice";
+import { fetchSavedElons, unsaveElon } from "../../redux/elonSlice";
 import Card from "../../components/Card";
 
 const SavedPage = () => {
   const dispatch = useDispatch();
   const { savedElons, savedLoaded, loading } = useSelector(
     (state) => state.elon
-   );
-    console.log("Saved elons:", savedElons);
+  );
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
-  
-  dispatch(fetchSavedElons(token)).then((res) => console.log("Fetch result:", res));
 
   useEffect(() => {
-    if (!savedLoaded && token) {
-      dispatch(fetchSavedElons(token));
-    }
-  }, [dispatch, savedLoaded, token]);
+if (token && !savedLoaded) {
+  dispatch(fetchSavedElons(token));
+}
+
+  }, [dispatch, token, savedLoaded]);
 
   if (loading && !savedLoaded)
     return <p className="text-center">Yuklanmoqda...</p>;
 
-  if ((savedElons?.length ?? 0) === 0)
+  if (savedElons.length === 0)
     return <p className="text-center">Hech narsa saqlanmagan.</p>;
 
   return (
@@ -42,9 +40,11 @@ const SavedPage = () => {
           status={item.status}
           postedDate={item.createdAt}
           user={user}
-          onDelete={() => {}}
-          onEdit={() => {}}
-          onSave={() => {}}
+          onSave={() =>
+            dispatch(unsaveElon({ id: item._id, token }))
+          }
+          isSaved={true}
+          showOwnerActions={false}
         />
       ))}
     </div>

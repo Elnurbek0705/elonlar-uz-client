@@ -29,7 +29,7 @@ const Elonlarim = () => {
   };
 
   const handleEdit = (id) => {
-    const selected = myElons.find((e) => e._id === id);
+    const myElons = myElons.filter(elon => elon.ownerId === userInfo._id);
     setEditData(selected);
     setModalOpen(true);
   };
@@ -67,8 +67,10 @@ const Elonlarim = () => {
               area={elon.area}
               status={elon.status}
               postedDate={elon.createdAt}
-              user={userInfo}
-              ownerId={elon.ownerId}
+              // Pass the actual user object (not the wrapper with token)
+              user={userInfo?.user}
+              // Owner id may be stored under different keys depending on API; try common ones
+              ownerId={elon.user?._id ?? elon.userId ?? elon.ownerId}
               onEdit={() => handleEdit(elon._id)}
               onDelete={() => {
                 setDeleteId(elon._id);

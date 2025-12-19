@@ -73,6 +73,7 @@ const ProfileSettings = () => {
           <span className="text-lg font-semibold">
             {formData.name} {formData.lastName}
           </span>
+
           <div className="w-32 h-32 mt-4 rounded-full overflow-hidden flex items-center justify-center bg-zinc-200 dark:bg-zinc-600">
             <img
               src={userInfo?.avatar ||  "https://cdn-icons-png.flaticon.com/512/149/149071.png" }
@@ -80,6 +81,45 @@ const ProfileSettings = () => {
               className="w-full h-full object-cover"
             />
           </div>
+
+          <ul className="mt-4 text-sm text-zinc-700 dark:text-zinc-300 space-y-2 text-center">
+            <li>
+              <span className="font-semibold">Email:</span>{" "}
+              {formData.email ? (
+                <a href={`mailto:${formData.email}`} className="text-blue-600 hover:underline">
+                  {formData.email}
+                </a>
+              ) : (
+                "—"
+              )}
+            </li>
+
+            <li>
+              <span className="font-semibold">Telefon:</span>{" "}
+              {formData.contactNumber || "—"}
+            </li>
+
+            <li>
+              <span className="font-semibold">Aloqa:</span>{" "}
+              {formData.contactLink ? (
+                <a
+                  href={formData.contactLink.startsWith("http") ? formData.contactLink : `https://${formData.contactLink}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  {formData.contactLink}
+                </a>
+              ) : (
+                "—"
+              )}
+            </li>
+
+            <li>
+              <span className="font-semibold">Jins:</span>{" "}
+              {formData.gender || "—"}
+            </li>
+          </ul>
         </div>
 
         <div className="flex flex-col gap-4 rounded-2xl p-4 border border-zinc-400 dark:border-zinc-500 w-full  inset-shadow-sm inset-shadow-zinc-500 overflow-y-auto">
@@ -144,7 +184,7 @@ const ProfileSettings = () => {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded w-full dark:bg-zinc-700/60 bg-zinc-300/60"
             >
               <option value="">Tanlang</option>
               <option value="male">Erkak</option>
