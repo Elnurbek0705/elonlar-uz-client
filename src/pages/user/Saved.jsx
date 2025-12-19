@@ -9,8 +9,10 @@ const SavedPage = () => {
     (state) => state.elon
   );
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
+  // Use Redux store as the single source of truth for the current user and token
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const user = userInfo?.user;
+  const token = userInfo?.token ?? localStorage.getItem("token");
 
   useEffect(() => {
 if (token && !savedLoaded) {

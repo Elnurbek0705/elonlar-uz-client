@@ -29,10 +29,16 @@ const Elonlarim = () => {
   };
 
   const handleEdit = (id) => {
-    const myElons = myElons.filter(elon => elon.ownerId === userInfo._id);
+    // Find by id — this list is the current user's elons so ownership is implied
+    const selected = myElons.find((elon) => elon._id === id);
+    if (!selected) return;
+    // Ensure current user exists
+    if (!userInfo?.user?._id) return;
     setEditData(selected);
     setModalOpen(true);
   };
+
+  if (!userInfo?.user) return <Loader />;
 
   return (
     <div className="p-4">
@@ -55,31 +61,43 @@ const Elonlarim = () => {
         <p className="text-center text-zinc-500">Hozircha hech qanday e’lon yo‘q.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {myElons.map((elon) => (
-            <Card
-              key={elon._id}
-              id={elon._id}
-              image={elon.image}
-              title={elon.title}
-              price={elon.price}
-              location={elon.location}
-              rooms={elon.rooms}
-              area={elon.area}
-              status={elon.status}
-              postedDate={elon.createdAt}
-              // Pass the actual user object (not the wrapper with token)
-              user={userInfo?.user}
-              // Owner id may be stored under different keys depending on API; try common ones
-              ownerId={elon.user?._id ?? elon.userId ?? elon.ownerId}
-              onEdit={() => handleEdit(elon._id)}
-              onDelete={() => {
-                setDeleteId(elon._id);
-                setConfirmOpen(true);
-              }}
-              onSave={() => console.log("save", elon._id)}
-              isSaved={false}
-            />
-          ))}
+          {myElons.map((elon) => {
+            const currentUserId = userInfo?.user?._id ?? null;
+            const elonOwnerId = elon.user?._id ?? elon.userId ?? elon.ownerId ?? null;
+            // If owner info is missing on 'my elons', treat the current user as the owner
+            const isOwner = Boolean(
+              currentUserId && (!elonOwnerId || String(currentUserId) === String(elonOwnerId))
+            );
+            const effectiveOwnerId = elonOwnerId ?? currentUserId;
+
+            // Debug: log if owner info is missing or unexpected
+            if (!elonOwnerId) console.log(`MyElon missing owner: ${elon._id}`, { user: elon.user, userId: elon.userId, ownerId: elon.ownerId });
+
+            return (
+              <Card
+                key={elon._id}
+                id={elon._id}
+                image={elon.image}
+                title={elon.title}
+                price={elon.price}
+                location={elon.location}
+                rooms={elon.rooms}
+                area={elon.area}
+                status={elon.status}
+                postedDate={elon.createdAt}
+                user={userInfo?.user}
+                ownerId={effectiveOwnerId}
+                onEdit={isOwner ? () => handleEdit(elon._id) : undefined}
+                onDelete={isOwner ? () => {
+                  setDeleteId(elon._id);
+                  setConfirmOpen(true);
+                } : undefined}
+                onSave={() => console.log("save", elon._id)}
+                isSaved={false}
+                showOwnerActions={isOwner}
+              />
+            );
+          })}
         </div>
       )}
 

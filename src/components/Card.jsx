@@ -20,14 +20,13 @@ const Card = ({
   isSaved,
   showOwnerActions = true,
 }) => {
-  const isOwner = user?._id === ownerId;
-
+  const isOwner = Boolean(user?._id && ownerId && String(user._id) === String(ownerId));
+console.log(`Card ID: ${id}, isOwner: ${isOwner}, User: ${user?._id}, Owner: ${ownerId}`);
   return (
     <div className="bg-zinc-300 dark:bg-zinc-700 rounded-lg overflow-hidden hover:shadow-lg shadow-md transition-shadow duration-300 flex flex-col">
       <img src={image} alt={title} className="w-full h-48 object-cover" />
 
       <div className="p-4 flex flex-col flex-1 justify-between">
-
         <div className="space-y-2">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">
             {title}
@@ -50,7 +49,6 @@ const Card = ({
         </div>
 
         <div className="mt-4 flex flex-col gap-2">
-
           <div className="flex flex-row gap-2">
             <NavLink
               to={`/cards/${id}`}
@@ -60,28 +58,28 @@ const Card = ({
             </NavLink>
 
             <button
-              onClick={() => onSave(id)}
+              onClick={() => onSave?.(id)}
               className="rounded-md px-2"
             >
-            <Heart
-              size={30}
-              className={isSaved ? "text-red-600 fill-current" : "text-pink-500"}
-              style={isSaved ? { stroke: "none" } : undefined}
-            />
+              <Heart
+                size={30}
+                className={isSaved ? "text-red-600 fill-current" : "text-pink-500"}
+                style={isSaved ? { stroke: "none" } : undefined}
+              />
             </button>
           </div>
 
           {isOwner && showOwnerActions && (
             <div className="flex gap-2 mt-2">
               <button
-                onClick={() => onEdit(id)}
+                onClick={() => onEdit?.(id)}
                 className="flex-1 flex items-center justify-center gap-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md"
               >
                 <Pencil size={16} /> Tahrirlash
               </button>
 
               <button
-                onClick={() => onDelete(id)}
+                onClick={() => onDelete?.(id)}
                 className="flex-1 flex items-center justify-center gap-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-md"
               >
                 <Trash2 size={16} /> O‘chirish

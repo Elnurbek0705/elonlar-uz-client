@@ -17,10 +17,12 @@ const CardsList = () => {
     (state) => state.elon
   );
 
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
-
-  const navigate = useNavigate();
+  console.log(elonlar);
+  
+  // Use Redux store as the single source of truth for the current user and token
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const user = userInfo?.user;
+  const token = userInfo?.token ?? localStorage.getItem("token");
 
 
   useEffect(() => {
@@ -72,7 +74,7 @@ const CardsList = () => {
           <Card
             key={item._id}
             id={item._id}
-            ownerId={item.user._id}
+            ownerId={item.user?._id ?? item.userId ?? item.ownerId}
             image={item.image}
             title={item.title}
             price={item.price}
@@ -84,6 +86,7 @@ const CardsList = () => {
             user={user}
             onSave={() => handleSaveToggle(item._id, isSaved)}
             isSaved={isSaved}
+            showOwnerActions={false}
           />
         );
       })}
