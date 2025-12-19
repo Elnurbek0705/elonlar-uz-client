@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { updateUserInfo } from "../../redux/userSlice";
-import { UserCircle } from "lucide-react";
 
 const ProfileSettings = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
+  const API = import.meta.env.VITE_API_URL;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -17,6 +17,13 @@ const ProfileSettings = () => {
     contactLink: "",
     gender: "",
   });
+
+  // Gender mapping: preview uchun
+  const genderMap = {
+    male: "Erkak",
+    female: "Ayol",
+    "": "—",
+  };
 
   useEffect(() => {
     if (userInfo?.user) {
@@ -41,7 +48,7 @@ const ProfileSettings = () => {
       if (!token) throw new Error("Token topilmadi");
 
       const res = await axios.put(
-        "http://localhost:5000/api/users/update",
+        `${API}/users/update`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -69,6 +76,7 @@ const ProfileSettings = () => {
       <hr className="border-dashed border-zinc-400 dark:border-zinc-500 my-4" />
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4">
+        {/* Preview */}
         <div className="flex flex-col items-center justify-center rounded-2xl p-4 border border-zinc-400 dark:border-zinc-500 w-full h-64 md:h-[420px] inset-shadow-sm inset-shadow-zinc-500">
           <span className="text-lg font-semibold">
             {formData.name} {formData.lastName}
@@ -76,7 +84,7 @@ const ProfileSettings = () => {
 
           <div className="w-32 h-32 mt-4 rounded-full overflow-hidden flex items-center justify-center bg-zinc-200 dark:bg-zinc-600">
             <img
-              src={userInfo?.avatar ||  "https://cdn-icons-png.flaticon.com/512/149/149071.png" }
+              src={userInfo?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
               alt="User Avatar"
               className="w-full h-full object-cover"
             />
@@ -117,12 +125,13 @@ const ProfileSettings = () => {
 
             <li>
               <span className="font-semibold">Jins:</span>{" "}
-              {formData.gender || "—"}
+              {genderMap[formData.gender]}
             </li>
           </ul>
         </div>
 
-        <div className="flex flex-col gap-4 rounded-2xl p-4 border border-zinc-400 dark:border-zinc-500 w-full  inset-shadow-sm inset-shadow-zinc-500 overflow-y-auto">
+        {/* Form */}
+        <div className="flex flex-col gap-4 rounded-2xl p-4 border border-zinc-400 dark:border-zinc-500 w-full inset-shadow-sm inset-shadow-zinc-500 overflow-y-auto">
           <div className="flex flex-col gap-2">
             <label className="font-semibold">Ism</label>
             <input

@@ -7,9 +7,17 @@ import { loginSuccess } from "../redux/userSlice";
 import { X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
+const API = import.meta.env.VITE_API_URL;
+
 const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ name: "", email: "", password: "", lastName: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -23,8 +31,9 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
     e.preventDefault();
 
     try {
+      /* ================= LOGIN ================= */
       if (isLogin) {
-        const res = await axios.post("http://localhost:5000/api/auth/login", {
+        const res = await axios.post(`${API}/auth/login`, {
           email: formData.email,
           password: formData.password,
         });
@@ -32,19 +41,16 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
         const token = res.data.token;
         let user = res.data.user ?? null;
 
-        // If backend didn't return user object, fetch the profile using the token
+        // Agar backend user qaytarmagan bo‘lsa
         if (!user) {
-          try {
-            const meRes = await axios.get("http://localhost:5000/api/users/me", {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            user = meRes.data.user ?? meRes.data;
-          } catch (err) {
-            console.warn("Could not fetch user profile after login:", err);
-          }
+          const meRes = await axios.get(`${API}/users/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          user = meRes.data.user ?? meRes.data;
         }
 
-        // Persist token and update redux with a normalized payload { token, user }
         localStorage.setItem("token", token);
         dispatch(loginSuccess({ token, user }));
 
@@ -60,36 +66,45 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
         setTimeout(() => {
           onClose();
           navigate(redirectTo);
-        }, 1000);
-      } else {
-        // REGISTER
-        await axios.post("http://localhost:5000/api/auth/register", {
+        }, 800);
+      }
+
+      /* ================= REGISTER ================= */
+      else {
+        await axios.post(`${API}/auth/register`, {
           name: formData.name,
           lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
         });
 
-        toast.success("Ro‘yxatdan o‘tish muvaffaqiyatli! Endi tizimga kiring ✅", {
-          duration: 3000,
-          style: {
-            background: "#2563eb",
-            color: "#fff",
-            fontWeight: 500,
-          },
-        });
+        toast.success(
+          "Ro‘yxatdan o‘tish muvaffaqiyatli! Endi tizimga kiring ✅",
+          {
+            duration: 3000,
+            style: {
+              background: "#2563eb",
+              color: "#fff",
+              fontWeight: 500,
+            },
+          }
+        );
 
         setIsLogin(true);
       }
     } catch (err) {
-      toast.error("Xatolik yuz berdi. Ma'lumotlarni tekshirib qayta urinib ko‘ring ❌", {
-        duration: 3000,
-        style: {
-          background: "#dc2626",
-          color: "#fff",
-          fontWeight: 500,
-        },
-      });
+      toast.error(
+        err.response?.data?.message ||
+          "Xatolik yuz berdi. Qayta urinib ko‘ring ❌",
+        {
+          duration: 3000,
+          style: {
+            background: "#dc2626",
+            color: "#fff",
+            fontWeight: 500,
+          },
+        }
+      );
     }
   };
 
@@ -97,7 +112,7 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          <Toaster position="top-center" reverseOrder={false} />
+          <Toaster position="top-center" />
 
           <motion.div
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
@@ -108,16 +123,15 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
           />
 
           <motion.div
-            className="fixed top-1/2 left-1/2 z-50 w-96 rounded-2xl shadow-lg
-                       bg-white dark:bg-zinc-800 p-6"
-            initial={{ opacity: 0, scale: 0.8, y: "-50%", x: "-50%" }}
-            animate={{ opacity: 1, scale: 1, y: "-50%", x: "-50%" }}
+            className="fixed top-1/2 left-1/2 z-50 w-96 p-6
+                       bg-white dark:bg-zinc-800 rounded-2xl shadow-lg"
+            initial={{ opacity: 0, scale: 0.8, x: "-50%", y: "-50%" }}
+            animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
             exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
           >
             <button
               onClick={onClose}
-              className="absolute top-3 right-3 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition"
+              className="absolute top-3 right-3 text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
             >
               <X size={22} />
             </button>
@@ -128,25 +142,24 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
 
             <form onSubmit={handleSubmit}>
               {!isLogin && (
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Ism"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="border w-full mb-3 p-2 rounded focus:outline-blue-500 dark:bg-zinc-700 dark:text-white"
-                />
-              )}
-
-              {!isLogin && (
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="border w-full mb-3 p-2 rounded focus:outline-blue-500 dark:bg-zinc-700 dark:text-white"
-                />
+                <>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Ism"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="border w-full mb-3 p-2 rounded dark:bg-zinc-700 dark:text-white"
+                  />
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Familiya"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="border w-full mb-3 p-2 rounded dark:bg-zinc-700 dark:text-white"
+                  />
+                </>
               )}
 
               <input
@@ -155,7 +168,7 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="border w-full mb-3 p-2 rounded focus:outline-blue-500 dark:bg-zinc-700 dark:text-white"
+                className="border w-full mb-3 p-2 rounded dark:bg-zinc-700 dark:text-white"
               />
 
               <input
@@ -164,7 +177,7 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
                 placeholder="Parol"
                 value={formData.password}
                 onChange={handleChange}
-                className="border w-full mb-4 p-2 rounded focus:outline-blue-500 dark:bg-zinc-700 dark:text-white"
+                className="border w-full mb-4 p-2 rounded dark:bg-zinc-700 dark:text-white"
               />
 
               <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">
@@ -178,7 +191,7 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
                   Akkount yo‘qmi?{" "}
                   <span
                     onClick={() => setIsLogin(false)}
-                    className="text-blue-600 hover:underline cursor-pointer"
+                    className="text-blue-600 cursor-pointer hover:underline"
                   >
                     Ro‘yxatdan o‘tish
                   </span>
@@ -188,7 +201,7 @@ const AuthModal = ({ isOpen, onClose, redirectTo = "/" }) => {
                   Akkountingiz bormi?{" "}
                   <span
                     onClick={() => setIsLogin(true)}
-                    className="text-blue-600 hover:underline cursor-pointer"
+                    className="text-blue-600 cursor-pointer hover:underline"
                   >
                     Kirish
                   </span>
